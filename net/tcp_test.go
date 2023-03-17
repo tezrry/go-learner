@@ -3,7 +3,6 @@ package net
 import (
 	"fmt"
 	"net"
-	"sync/atomic"
 	"testing"
 	"time"
 
@@ -12,7 +11,6 @@ import (
 
 type handler func(conn net.Conn)
 type tcpEchoServer struct {
-	stopped atomic.Bool
 	address string
 	handler handler
 }
@@ -30,7 +28,7 @@ func (srv *tcpEchoServer) start() {
 		panic(err)
 	}
 
-	for !srv.stopped.Load() {
+	for {
 		conn, err := lis.Accept()
 		if err != nil {
 			fmt.Println(err)
@@ -39,10 +37,6 @@ func (srv *tcpEchoServer) start() {
 
 		go srv.handler(conn)
 	}
-}
-
-func (srv *tcpEchoServer) stop() {
-	srv.stopped.Store(true)
 }
 
 func TestTcpEchoServer(t *testing.T) {
@@ -63,12 +57,13 @@ func TestTcpEchoServer(t *testing.T) {
 		err := conn.Close()
 		assert.NoError(t, err)
 	})
+
 	go srv.start()
 	time.Sleep(time.Second)
 
 	conn, err := net.Dial("tcp", addr)
 	assert.NoError(t, err)
-
+	//time.Sleep(time.Second * 15)
 	msg := "hello"
 	t.Logf("send: %s", msg)
 	nMsg := len(msg)
@@ -79,7 +74,5 @@ func TestTcpEchoServer(t *testing.T) {
 	buf := make([]byte, nMsg)
 	n, err = conn.Read(buf)
 	assert.Equal(t, n, nMsg)
-
 	t.Logf("recv: %s", string(buf))
-	srv.stop()
 }
