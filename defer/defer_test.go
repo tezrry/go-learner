@@ -18,14 +18,16 @@ func TestClosure(t *testing.T) {
 	for i := range whatever {
 		defer func() { fmt.Println(i) }()
 	}
+}
 
+func TestClosure2(t *testing.T) {
 	// 参数i在defer声明时已被求值
 	for i := range whatever {
 		defer func(ii int) { fmt.Println(ii) }(i)
 	}
 }
 
-func TestClosure2(t *testing.T) {
+func TestClosure3(t *testing.T) {
 	// 变量i作为闭包引用，但函数依次执行，defer也是依次执行
 	for i := range whatever {
 		func() {
@@ -50,6 +52,7 @@ func pointerClose(t *test) {
 func TestStructPointer(t *testing.T) {
 	ts := []test{{"a"}, {"b"}, {"c"}}
 	for _, t := range ts {
+		// 注意与作为参数的区别
 		defer t.Close()
 	}
 }
