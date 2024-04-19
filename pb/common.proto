@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package proto;
+
+message CommonReq {
+  int64 id = 1;
+  int64 type = 2;
+}
+
+message CommonRsp {
+  int64 revision = 2;
+}
