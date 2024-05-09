@@ -1,5 +1,10 @@
 package escape
 
+// go build -gcflags="..."
+// -m/-m -m 逃逸分析
+// -l 禁止内联
+// -N 禁止编译器优化
+// -S 查看汇编
 type foo struct {
 	v int64
 }
