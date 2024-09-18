@@ -1,4 +1,11 @@
-package pb
+package comm_data
+
+type DataTableHeader struct {
+	id    uint16
+	typ   uint16
+	lh    uint32
+	dirty uint64
+}
 
 type storeType uint8
 

@@ -2,6 +2,8 @@
 
 [[ "$debug" ]] && set -x
 
+# protoc -I=. -I="$GOPATH/pkg/mod"  --gogofaster_out=. common.proto
+
 cd "$(dirname "$0")" || exit 1
 cd ../.. || exit 1
 ROOT=$(pwd)

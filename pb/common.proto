@@ -3,16 +3,29 @@ syntax = "proto3";
 import "github.com/gogo/protobuf@v1.3.2/gogoproto/gogo.proto";
 //package pb;
 option go_package="./pb";
-message CommonReq {
+
+message GeneralResponse {
+  DataSet d_s = 1 [(gogoproto.nullable) = false];
+  ResponseBody body = 2;
+}
+
+message ResponseBody {
+  uint32 typ = 1;
+  bytes bin =  2;
+}
+
+message DataSet {
+  repeated DataGroup update = 1 [(gogoproto.nullable) = false];
+  repeated DataGroup delete = 2;
+}
+
+message DataGroup {
   int64 id = 1;
-  int64 type = 2;
+  repeated DataTable tbs = 2 [(gogoproto.nullable) = false];
 }
 
-message Req {
-  //CommonReq req = 1 [(gogoproto.nullable) = false];
-  int32 v = 2;
-}
-
-message CommonRsp {
-  int64 revision = 2;
+message DataTable {
+  uint32 id = 1;
+  bytes bin = 2;
+  uint64 mask = 3;
 }

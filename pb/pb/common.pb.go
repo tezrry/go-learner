@@ -23,23 +23,23 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type CommonReq struct {
-	Id   int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type int64 `protobuf:"varint,2,opt,name=type,proto3" json:"type,omitempty"`
+type GeneralResponse struct {
+	DS   DataSet       `protobuf:"bytes,1,opt,name=d_s,json=dS,proto3" json:"d_s"`
+	Body *ResponseBody `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
 }
 
-func (m *CommonReq) Reset()         { *m = CommonReq{} }
-func (m *CommonReq) String() string { return proto.CompactTextString(m) }
-func (*CommonReq) ProtoMessage()    {}
-func (*CommonReq) Descriptor() ([]byte, []int) {
+func (m *GeneralResponse) Reset()         { *m = GeneralResponse{} }
+func (m *GeneralResponse) String() string { return proto.CompactTextString(m) }
+func (*GeneralResponse) ProtoMessage()    {}
+func (*GeneralResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_555bd8c177793206, []int{0}
 }
-func (m *CommonReq) XXX_Unmarshal(b []byte) error {
+func (m *GeneralResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *CommonReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *GeneralResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_CommonReq.Marshal(b, m, deterministic)
+		return xxx_messageInfo_GeneralResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -49,49 +49,206 @@ func (m *CommonReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *CommonReq) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CommonReq.Merge(m, src)
+func (m *GeneralResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GeneralResponse.Merge(m, src)
 }
-func (m *CommonReq) XXX_Size() int {
+func (m *GeneralResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *CommonReq) XXX_DiscardUnknown() {
-	xxx_messageInfo_CommonReq.DiscardUnknown(m)
+func (m *GeneralResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GeneralResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CommonReq proto.InternalMessageInfo
+var xxx_messageInfo_GeneralResponse proto.InternalMessageInfo
 
-func (m *CommonReq) GetId() int64 {
+func (m *GeneralResponse) GetDS() DataSet {
+	if m != nil {
+		return m.DS
+	}
+	return DataSet{}
+}
+
+func (m *GeneralResponse) GetBody() *ResponseBody {
+	if m != nil {
+		return m.Body
+	}
+	return nil
+}
+
+type ResponseBody struct {
+	Typ uint32 `protobuf:"varint,1,opt,name=typ,proto3" json:"typ,omitempty"`
+	Bin []byte `protobuf:"bytes,2,opt,name=bin,proto3" json:"bin,omitempty"`
+}
+
+func (m *ResponseBody) Reset()         { *m = ResponseBody{} }
+func (m *ResponseBody) String() string { return proto.CompactTextString(m) }
+func (*ResponseBody) ProtoMessage()    {}
+func (*ResponseBody) Descriptor() ([]byte, []int) {
+	return fileDescriptor_555bd8c177793206, []int{1}
+}
+func (m *ResponseBody) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ResponseBody) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ResponseBody.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ResponseBody) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseBody.Merge(m, src)
+}
+func (m *ResponseBody) XXX_Size() int {
+	return m.Size()
+}
+func (m *ResponseBody) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResponseBody.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResponseBody proto.InternalMessageInfo
+
+func (m *ResponseBody) GetTyp() uint32 {
+	if m != nil {
+		return m.Typ
+	}
+	return 0
+}
+
+func (m *ResponseBody) GetBin() []byte {
+	if m != nil {
+		return m.Bin
+	}
+	return nil
+}
+
+type DataSet struct {
+	Update []DataGroup  `protobuf:"bytes,1,rep,name=update,proto3" json:"update"`
+	Delete []*DataGroup `protobuf:"bytes,2,rep,name=delete,proto3" json:"delete,omitempty"`
+}
+
+func (m *DataSet) Reset()         { *m = DataSet{} }
+func (m *DataSet) String() string { return proto.CompactTextString(m) }
+func (*DataSet) ProtoMessage()    {}
+func (*DataSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_555bd8c177793206, []int{2}
+}
+func (m *DataSet) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DataSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DataSet.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DataSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DataSet.Merge(m, src)
+}
+func (m *DataSet) XXX_Size() int {
+	return m.Size()
+}
+func (m *DataSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_DataSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DataSet proto.InternalMessageInfo
+
+func (m *DataSet) GetUpdate() []DataGroup {
+	if m != nil {
+		return m.Update
+	}
+	return nil
+}
+
+func (m *DataSet) GetDelete() []*DataGroup {
+	if m != nil {
+		return m.Delete
+	}
+	return nil
+}
+
+type DataGroup struct {
+	Id  int64       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Tbs []DataTable `protobuf:"bytes,2,rep,name=tbs,proto3" json:"tbs"`
+}
+
+func (m *DataGroup) Reset()         { *m = DataGroup{} }
+func (m *DataGroup) String() string { return proto.CompactTextString(m) }
+func (*DataGroup) ProtoMessage()    {}
+func (*DataGroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_555bd8c177793206, []int{3}
+}
+func (m *DataGroup) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DataGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DataGroup.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DataGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DataGroup.Merge(m, src)
+}
+func (m *DataGroup) XXX_Size() int {
+	return m.Size()
+}
+func (m *DataGroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_DataGroup.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DataGroup proto.InternalMessageInfo
+
+func (m *DataGroup) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *CommonReq) GetType() int64 {
+func (m *DataGroup) GetTbs() []DataTable {
 	if m != nil {
-		return m.Type
+		return m.Tbs
 	}
-	return 0
+	return nil
 }
 
-type Req struct {
-	Req CommonReq `protobuf:"bytes,1,opt,name=req,proto3" json:"req"`
-	V   int32     `protobuf:"varint,2,opt,name=v,proto3" json:"v,omitempty"`
+type DataTable struct {
+	Id   uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Bin  []byte `protobuf:"bytes,2,opt,name=bin,proto3" json:"bin,omitempty"`
+	Mask uint64 `protobuf:"varint,3,opt,name=mask,proto3" json:"mask,omitempty"`
 }
 
-func (m *Req) Reset()         { *m = Req{} }
-func (m *Req) String() string { return proto.CompactTextString(m) }
-func (*Req) ProtoMessage()    {}
-func (*Req) Descriptor() ([]byte, []int) {
-	return fileDescriptor_555bd8c177793206, []int{1}
+func (m *DataTable) Reset()         { *m = DataTable{} }
+func (m *DataTable) String() string { return proto.CompactTextString(m) }
+func (*DataTable) ProtoMessage()    {}
+func (*DataTable) Descriptor() ([]byte, []int) {
+	return fileDescriptor_555bd8c177793206, []int{4}
 }
-func (m *Req) XXX_Unmarshal(b []byte) error {
+func (m *DataTable) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Req) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *DataTable) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Req.Marshal(b, m, deterministic)
+		return xxx_messageInfo_DataTable.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -101,103 +258,75 @@ func (m *Req) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *Req) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Req.Merge(m, src)
+func (m *DataTable) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DataTable.Merge(m, src)
 }
-func (m *Req) XXX_Size() int {
+func (m *DataTable) XXX_Size() int {
 	return m.Size()
 }
-func (m *Req) XXX_DiscardUnknown() {
-	xxx_messageInfo_Req.DiscardUnknown(m)
+func (m *DataTable) XXX_DiscardUnknown() {
+	xxx_messageInfo_DataTable.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Req proto.InternalMessageInfo
+var xxx_messageInfo_DataTable proto.InternalMessageInfo
 
-func (m *Req) GetReq() CommonReq {
+func (m *DataTable) GetId() uint32 {
 	if m != nil {
-		return m.Req
-	}
-	return CommonReq{}
-}
-
-func (m *Req) GetV() int32 {
-	if m != nil {
-		return m.V
+		return m.Id
 	}
 	return 0
 }
 
-type CommonRsp struct {
-	Revision int64 `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
-}
-
-func (m *CommonRsp) Reset()         { *m = CommonRsp{} }
-func (m *CommonRsp) String() string { return proto.CompactTextString(m) }
-func (*CommonRsp) ProtoMessage()    {}
-func (*CommonRsp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_555bd8c177793206, []int{2}
-}
-func (m *CommonRsp) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *CommonRsp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CommonRsp.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *CommonRsp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CommonRsp.Merge(m, src)
-}
-func (m *CommonRsp) XXX_Size() int {
-	return m.Size()
-}
-func (m *CommonRsp) XXX_DiscardUnknown() {
-	xxx_messageInfo_CommonRsp.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CommonRsp proto.InternalMessageInfo
-
-func (m *CommonRsp) GetRevision() int64 {
+func (m *DataTable) GetBin() []byte {
 	if m != nil {
-		return m.Revision
+		return m.Bin
+	}
+	return nil
+}
+
+func (m *DataTable) GetMask() uint64 {
+	if m != nil {
+		return m.Mask
 	}
 	return 0
 }
 
 func init() {
-	proto.RegisterType((*CommonReq)(nil), "CommonReq")
-	proto.RegisterType((*Req)(nil), "Req")
-	proto.RegisterType((*CommonRsp)(nil), "CommonRsp")
+	proto.RegisterType((*GeneralResponse)(nil), "GeneralResponse")
+	proto.RegisterType((*ResponseBody)(nil), "ResponseBody")
+	proto.RegisterType((*DataSet)(nil), "DataSet")
+	proto.RegisterType((*DataGroup)(nil), "DataGroup")
+	proto.RegisterType((*DataTable)(nil), "DataTable")
 }
 
 func init() { proto.RegisterFile("common.proto", fileDescriptor_555bd8c177793206) }
 
 var fileDescriptor_555bd8c177793206 = []byte{
-	// 216 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x49, 0xce, 0xcf, 0xcd,
-	0xcd, 0xcf, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x97, 0x32, 0x49, 0xcf, 0x2c, 0xc9, 0x28, 0x4d,
-	0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0xcf, 0x4f, 0xcf, 0xd7, 0x07, 0x0b, 0x27, 0x95, 0xa6, 0x39,
-	0x94, 0x19, 0xea, 0x19, 0xeb, 0x19, 0x81, 0x05, 0xc1, 0x62, 0x60, 0x16, 0x44, 0x97, 0x92, 0x3e,
-	0x17, 0xa7, 0x33, 0xd8, 0x94, 0xa0, 0xd4, 0x42, 0x21, 0x3e, 0x2e, 0xa6, 0xcc, 0x14, 0x09, 0x46,
-	0x05, 0x46, 0x0d, 0xe6, 0x20, 0xa6, 0xcc, 0x14, 0x21, 0x21, 0x2e, 0x96, 0x92, 0xca, 0x82, 0x54,
-	0x09, 0x26, 0xb0, 0x08, 0x98, 0xad, 0x64, 0xce, 0xc5, 0x0c, 0x52, 0xaa, 0xc4, 0xc5, 0x5c, 0x94,
-	0x5a, 0x08, 0x56, 0xcb, 0x6d, 0xc4, 0xa5, 0x07, 0x37, 0xc3, 0x89, 0xe5, 0xc4, 0x3d, 0x79, 0x86,
-	0x20, 0x90, 0xa4, 0x10, 0x0f, 0x17, 0x63, 0x19, 0x58, 0x2f, 0x6b, 0x10, 0x63, 0x99, 0x92, 0x3a,
-	0xdc, 0xa6, 0xe2, 0x02, 0x21, 0x29, 0x2e, 0x8e, 0xa2, 0xd4, 0xb2, 0xcc, 0xe2, 0xcc, 0xfc, 0x3c,
-	0xa8, 0xe9, 0x70, 0xbe, 0x93, 0xdc, 0x89, 0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0x3e, 0x78,
-	0x24, 0xc7, 0x38, 0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44,
-	0xb1, 0xe8, 0xe9, 0x17, 0x24, 0x25, 0xb1, 0x81, 0x5d, 0x6e, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff,
-	0x1c, 0x41, 0x45, 0xad, 0xff, 0x00, 0x00, 0x00,
+	// 325 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x91, 0xbf, 0x4e, 0xf3, 0x30,
+	0x14, 0xc5, 0xf3, 0x4f, 0xfd, 0x3e, 0x6e, 0x5b, 0x40, 0x9e, 0x22, 0x06, 0xb7, 0x78, 0xca, 0xe4,
+	0x8a, 0x94, 0x1d, 0xa8, 0x90, 0xba, 0xbb, 0x20, 0x24, 0x16, 0x14, 0xd7, 0xa6, 0x44, 0x34, 0x71,
+	0xd4, 0x38, 0x48, 0x7d, 0x0b, 0x1e, 0xab, 0x63, 0x47, 0x26, 0x84, 0xda, 0x17, 0x41, 0xb9, 0x0d,
+	0xa8, 0xc0, 0x76, 0xf4, 0x3b, 0xf7, 0x9e, 0x7b, 0x2c, 0x43, 0x67, 0x6a, 0xb2, 0xcc, 0xe4, 0xbc,
+	0x58, 0x18, 0x6b, 0x4e, 0xce, 0x67, 0xa9, 0x7d, 0xaa, 0x24, 0x9f, 0x9a, 0x6c, 0x30, 0x33, 0x33,
+	0x33, 0x40, 0x2c, 0xab, 0xc7, 0xcb, 0x97, 0x33, 0x3e, 0xe4, 0x31, 0x42, 0x64, 0xa8, 0x76, 0x5b,
+	0xec, 0x16, 0x8e, 0xc6, 0x3a, 0xd7, 0x8b, 0x64, 0x2e, 0x74, 0x59, 0x98, 0xbc, 0xd4, 0xa4, 0x07,
+	0xbe, 0x7a, 0x28, 0x43, 0xb7, 0xef, 0x46, 0xed, 0xf8, 0x3f, 0xbf, 0x4e, 0x6c, 0x32, 0xd1, 0x76,
+	0x14, 0xac, 0xde, 0x7b, 0x8e, 0xf0, 0xd4, 0x84, 0x9c, 0x42, 0x20, 0x8d, 0x5a, 0x86, 0x1e, 0x4e,
+	0x74, 0xf9, 0xd7, 0xe6, 0xc8, 0xa8, 0xa5, 0x40, 0x8b, 0xc5, 0xd0, 0xd9, 0xa7, 0xe4, 0x18, 0x7c,
+	0xbb, 0x2c, 0x30, 0xb3, 0x2b, 0x6a, 0x59, 0x13, 0x99, 0xe6, 0x98, 0xd1, 0x11, 0xb5, 0x64, 0x77,
+	0xf0, 0xaf, 0xb9, 0x45, 0x22, 0x68, 0x55, 0x85, 0x4a, 0xac, 0x0e, 0xdd, 0xbe, 0x1f, 0xb5, 0x63,
+	0xc0, 0x16, 0xe3, 0x85, 0xa9, 0x8a, 0xa6, 0x47, 0xe3, 0x13, 0x06, 0x2d, 0xa5, 0xe7, 0xda, 0xea,
+	0xd0, 0xfb, 0x3d, 0x29, 0x1a, 0x87, 0x5d, 0xc0, 0xc1, 0x37, 0x24, 0x87, 0xe0, 0xa5, 0x0a, 0x8b,
+	0xf8, 0xc2, 0x4b, 0x15, 0x61, 0xe0, 0x5b, 0x59, 0xfe, 0xd8, 0xbe, 0x49, 0xe4, 0x5c, 0x37, 0x77,
+	0x6a, 0x93, 0x5d, 0xed, 0x02, 0x90, 0xef, 0x05, 0x74, 0x31, 0xe0, 0xcf, 0x43, 0x08, 0x81, 0x20,
+	0x4b, 0xca, 0xe7, 0xd0, 0xef, 0xbb, 0x51, 0x20, 0x50, 0x8f, 0xe8, 0x6a, 0x43, 0xdd, 0xf5, 0x86,
+	0xba, 0x1f, 0x1b, 0xea, 0xbe, 0x6e, 0xa9, 0xb3, 0xde, 0x52, 0xe7, 0x6d, 0x4b, 0x9d, 0xfb, 0x80,
+	0x0f, 0x0a, 0x29, 0x5b, 0xf8, 0x1d, 0xc3, 0xcf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x5c, 0x77, 0x1e,
+	0x9f, 0xd4, 0x01, 0x00, 0x00,
 }
 
-func (m *CommonReq) Marshal() (dAtA []byte, err error) {
+func (m *GeneralResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -207,56 +336,30 @@ func (m *CommonReq) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *CommonReq) MarshalTo(dAtA []byte) (int, error) {
+func (m *GeneralResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *CommonReq) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *GeneralResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Type != 0 {
-		i = encodeVarintCommon(dAtA, i, uint64(m.Type))
+	if m.Body != nil {
+		{
+			size, err := m.Body.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintCommon(dAtA, i, uint64(size))
+		}
 		i--
-		dAtA[i] = 0x10
-	}
-	if m.Id != 0 {
-		i = encodeVarintCommon(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Req) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Req) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Req) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.V != 0 {
-		i = encodeVarintCommon(dAtA, i, uint64(m.V))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	{
-		size, err := m.Req.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.DS.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -268,7 +371,7 @@ func (m *Req) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *CommonRsp) Marshal() (dAtA []byte, err error) {
+func (m *ResponseBody) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -278,20 +381,160 @@ func (m *CommonRsp) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *CommonRsp) MarshalTo(dAtA []byte) (int, error) {
+func (m *ResponseBody) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *CommonRsp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ResponseBody) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Revision != 0 {
-		i = encodeVarintCommon(dAtA, i, uint64(m.Revision))
+	if len(m.Bin) > 0 {
+		i -= len(m.Bin)
+		copy(dAtA[i:], m.Bin)
+		i = encodeVarintCommon(dAtA, i, uint64(len(m.Bin)))
 		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
+	}
+	if m.Typ != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.Typ))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DataSet) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DataSet) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DataSet) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Delete) > 0 {
+		for iNdEx := len(m.Delete) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Delete[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCommon(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Update) > 0 {
+		for iNdEx := len(m.Update) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Update[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCommon(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DataGroup) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DataGroup) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DataGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Tbs) > 0 {
+		for iNdEx := len(m.Tbs) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tbs[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCommon(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.Id != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DataTable) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DataTable) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DataTable) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Mask != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.Mask))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Bin) > 0 {
+		i -= len(m.Bin)
+		copy(dAtA[i:], m.Bin)
+		i = encodeVarintCommon(dAtA, i, uint64(len(m.Bin)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -307,7 +550,59 @@ func encodeVarintCommon(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *CommonReq) Size() (n int) {
+func (m *GeneralResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.DS.Size()
+	n += 1 + l + sovCommon(uint64(l))
+	if m.Body != nil {
+		l = m.Body.Size()
+		n += 1 + l + sovCommon(uint64(l))
+	}
+	return n
+}
+
+func (m *ResponseBody) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Typ != 0 {
+		n += 1 + sovCommon(uint64(m.Typ))
+	}
+	l = len(m.Bin)
+	if l > 0 {
+		n += 1 + l + sovCommon(uint64(l))
+	}
+	return n
+}
+
+func (m *DataSet) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Update) > 0 {
+		for _, e := range m.Update {
+			l = e.Size()
+			n += 1 + l + sovCommon(uint64(l))
+		}
+	}
+	if len(m.Delete) > 0 {
+		for _, e := range m.Delete {
+			l = e.Size()
+			n += 1 + l + sovCommon(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *DataGroup) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -316,34 +611,30 @@ func (m *CommonReq) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovCommon(uint64(m.Id))
 	}
-	if m.Type != 0 {
-		n += 1 + sovCommon(uint64(m.Type))
+	if len(m.Tbs) > 0 {
+		for _, e := range m.Tbs {
+			l = e.Size()
+			n += 1 + l + sovCommon(uint64(l))
+		}
 	}
 	return n
 }
 
-func (m *Req) Size() (n int) {
+func (m *DataTable) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = m.Req.Size()
-	n += 1 + l + sovCommon(uint64(l))
-	if m.V != 0 {
-		n += 1 + sovCommon(uint64(m.V))
+	if m.Id != 0 {
+		n += 1 + sovCommon(uint64(m.Id))
 	}
-	return n
-}
-
-func (m *CommonRsp) Size() (n int) {
-	if m == nil {
-		return 0
+	l = len(m.Bin)
+	if l > 0 {
+		n += 1 + l + sovCommon(uint64(l))
 	}
-	var l int
-	_ = l
-	if m.Revision != 0 {
-		n += 1 + sovCommon(uint64(m.Revision))
+	if m.Mask != 0 {
+		n += 1 + sovCommon(uint64(m.Mask))
 	}
 	return n
 }
@@ -354,7 +645,7 @@ func sovCommon(x uint64) (n int) {
 func sozCommon(x uint64) (n int) {
 	return sovCommon(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *CommonReq) Unmarshal(dAtA []byte) error {
+func (m *GeneralResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -377,103 +668,15 @@ func (m *CommonReq) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: CommonReq: wiretype end group for non-group")
+			return fmt.Errorf("proto: GeneralResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CommonReq: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCommon
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			m.Type = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCommon
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Type |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCommon(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCommon
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Req) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCommon
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Req: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Req: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: GeneralResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Req", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DS", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -500,15 +703,15 @@ func (m *Req) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.Req.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.DS.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field V", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Body", wireType)
 			}
-			m.V = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowCommon
@@ -518,11 +721,28 @@ func (m *Req) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.V |= int32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Body == nil {
+				m.Body = &ResponseBody{}
+			}
+			if err := m.Body.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipCommon(dAtA[iNdEx:])
@@ -544,7 +764,7 @@ func (m *Req) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *CommonRsp) Unmarshal(dAtA []byte) error {
+func (m *ResponseBody) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -567,17 +787,17 @@ func (m *CommonRsp) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: CommonRsp: wiretype end group for non-group")
+			return fmt.Errorf("proto: ResponseBody: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CommonRsp: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ResponseBody: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 2:
+		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Revision", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Typ", wireType)
 			}
-			m.Revision = 0
+			m.Typ = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowCommon
@@ -587,7 +807,384 @@ func (m *CommonRsp) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Revision |= int64(b&0x7F) << shift
+				m.Typ |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bin", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Bin = append(m.Bin[:0], dAtA[iNdEx:postIndex]...)
+			if m.Bin == nil {
+				m.Bin = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipCommon(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DataSet) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowCommon
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DataSet: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DataSet: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Update", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Update = append(m.Update, DataGroup{})
+			if err := m.Update[len(m.Update)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Delete", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Delete = append(m.Delete, &DataGroup{})
+			if err := m.Delete[len(m.Delete)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipCommon(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DataGroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowCommon
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DataGroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DataGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Tbs", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Tbs = append(m.Tbs, DataTable{})
+			if err := m.Tbs[len(m.Tbs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipCommon(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DataTable) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowCommon
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DataTable: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DataTable: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bin", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthCommon
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Bin = append(m.Bin[:0], dAtA[iNdEx:postIndex]...)
+			if m.Bin == nil {
+				m.Bin = []byte{}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mask", wireType)
+			}
+			m.Mask = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCommon
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Mask |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
