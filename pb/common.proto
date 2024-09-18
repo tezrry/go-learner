@@ -1,10 +1,16 @@
 syntax = "proto3";
 
-package pb;
-    option go_package="./pb";
+import "github.com/gogo/protobuf@v1.3.2/gogoproto/gogo.proto";
+//package pb;
+option go_package="./pb";
 message CommonReq {
   int64 id = 1;
   int64 type = 2;
+}
+
+message Req {
+  //CommonReq req = 1 [(gogoproto.nullable) = false];
+  int32 v = 2;
 }
 
 message CommonRsp {

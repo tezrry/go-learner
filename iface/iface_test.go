@@ -3,6 +3,8 @@ package iface
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type Mover interface {
@@ -49,4 +51,12 @@ func TestReceiver(t *testing.T) {
 	// 如类型 S 包含匿名字段 T，则 S 和 *S 方法集包含 T 方法。
 	// 如类型 S 包含匿名字段 *T，则 S 和 *S 方法集包含 T + *T 方法。
 	// 不管嵌入 T 或 *T，*S 方法集总是包含 T + *T 方法。
+}
+
+func TestNil(t *testing.T) {
+	var i any
+	require.Equal(t, nil, i)
+
+	i = int(1)
+	require.True(t, int(1) == i)
 }
