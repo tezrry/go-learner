@@ -1,12 +1,21 @@
 syntax = "proto3";
 
-import "github.com/gogo/protobuf@v1.3.2/gogoproto/gogo.proto";
+//import "github.com/gogo/protobuf@v1.3.2/gogoproto/gogo.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 //package pb;
 option go_package="./pb";
 
+message Status {
+  enum Code {
+    OK = 0;
+    Error = 1;
+  }
+}
+
 message GeneralResponse {
-  DataSet d_s = 1 [(gogoproto.nullable) = false];
+  Status.Code sc = 1;
   ResponseBody body = 2;
+  DataSet DS = 3 [(gogoproto.nullable) = false];
 }
 
 message ResponseBody {

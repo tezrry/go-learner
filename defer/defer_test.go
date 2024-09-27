@@ -84,3 +84,57 @@ func TestStructPointer5(t *testing.T) {
 		defer pointerClose(t)
 	}
 }
+
+func newTest() *test {
+	return &test{"a"}
+}
+func panicFuncReturn(b bool, info string) (inst *test) {
+	defer func() {
+		if r := recover(); r != nil {
+			inst = &test{info}
+		}
+	}()
+	if b {
+		panic("panicFunc")
+	}
+	return newTest()
+}
+func panicFunc(b bool, info string) (inst *test) {
+	if b {
+		panic("panicFunc")
+	}
+	return newTest()
+}
+func TestPanicReturn(t *testing.T) {
+	var a, b *test
+	defer func() {
+		if a != nil {
+			t.Log(a)
+		}
+		if b != nil {
+			t.Log(b)
+		}
+	}()
+
+	b = newTest()
+	a = panicFuncReturn(true, "a panic")
+
+	t.Log(a)
+	t.Log(b)
+}
+
+func TestMultiPanic(t *testing.T) {
+	var a *test
+	defer func() {
+		a = panicFuncReturn(true, "second panic")
+		if r := recover(); r != nil {
+			t.Log(r)
+		}
+		if r := recover(); r != nil {
+			t.Log(r)
+		}
+	}()
+
+	a = panicFunc(true, "first panic")
+	t.Log(a)
+}
