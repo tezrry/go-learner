@@ -106,3 +106,19 @@ func TestString2ByteSlice(t *testing.T) {
 		uintptr(unsafe.Pointer(unsafe.StringData(s))),
 		uintptr(unsafe.Pointer(unsafe.SliceData(bs))))
 }
+
+func Benchmark_ExpandSlice_1(b *testing.B) {
+	var bs = []byte{'0'}
+	for i := 0; i < b.N; i++ {
+		bs = append(bs, make([]byte, 1024)...)
+	}
+}
+
+func Benchmark_ExpandSlice_2(b *testing.B) {
+	var bs = []byte{'0'}
+	for i := 0; i < b.N; i++ {
+		bs1 := make([]byte, 1024)
+		copy(bs1, bs)
+		bs = bs1
+	}
+}

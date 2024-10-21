@@ -11,3 +11,12 @@ func TestVariantInt64(t *testing.T) {
 	t.Log(n)
 	t.Log(buf)
 }
+
+func TestNegative(t *testing.T) {
+	i32 := int32(-10)
+	ui32 := uint32(i32)
+
+	i := int32(-3)
+	i = int32(uint32(i) + ui32)
+	t.Log(i)
+}
