@@ -2,6 +2,7 @@ package slice
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 	"unsafe"
 
@@ -108,17 +109,41 @@ func TestString2ByteSlice(t *testing.T) {
 }
 
 func Benchmark_ExpandSlice_1(b *testing.B) {
-	var bs = []byte{'0'}
+	b1 := make([]byte, 1024)
 	for i := 0; i < b.N; i++ {
-		bs = append(bs, make([]byte, 1024)...)
+		var b0 = []byte{'0'}
+		b0 = append(b0, b1...)
 	}
 }
 
 func Benchmark_ExpandSlice_2(b *testing.B) {
-	var bs = []byte{'0'}
+	b1 := make([]byte, 1024)
 	for i := 0; i < b.N; i++ {
-		bs1 := make([]byte, 1024)
-		copy(bs1, bs)
-		bs = bs1
+		var b0 = []byte{'0'}
+		copy(b1, b0)
+		b0 = b1
+	}
+}
+
+func Benchmark_ExpandSlice_3(b *testing.B) {
+	s1 := ByteSlice2String(make([]byte, 1024))
+	for i := 0; i < b.N; i++ {
+		var b0 = []byte{'0'}
+		b0 = append(b0, s1...)
+	}
+}
+
+func Benchmark_appendInt_1(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var b0 = make([]byte, 0, 1024)
+		b0 = strconv.AppendInt(b0, int64(i), 10)
+	}
+}
+
+func Benchmark_appendInt_2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var b0 = make([]byte, 1024)
+		s := strconv.FormatInt(int64(i), 10)
+		copy(b0, s)
 	}
 }
