@@ -147,3 +147,35 @@ func Benchmark_appendInt_2(b *testing.B) {
 		copy(b0, s)
 	}
 }
+
+func Benchmark_iterate_vs_map(b *testing.B) {
+	n := 16
+	s := make([]int, n)
+	for i := 0; i < n; i++ {
+		s[i] = i
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for _, v := range s {
+			if v == n+1 {
+				b.Log("ok")
+			}
+		}
+	}
+}
+
+func Benchmark_iterate_vs_map1(b *testing.B) {
+	n := 16
+	m := make(map[int]int, n)
+	for i := 0; i < n; i++ {
+		m[i] = i
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, ok := m[n+1]; ok {
+			b.Log("ok")
+		}
+	}
+}
