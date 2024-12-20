@@ -2,6 +2,13 @@ package cmd
 
 import "go-learner/orm"
 
+type TestKey struct {
+	I64 int64
+}
+
+type testMetadata struct {
+}
+
 type TestRecord struct {
 	orm.Header
 	body TestPB

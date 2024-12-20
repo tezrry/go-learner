@@ -1,13 +1,30 @@
 package orm
 
-type Header struct {
-	dirty uint64
-}
+import (
+	"fmt"
+	"reflect"
+)
 
-type BaseRecord struct {
-	dirty uint64
-}
+func Get[T any](ctx *Context, keys ...any) *T {
+	var t *T
+	tn := reflect.TypeOf(t).Elem().String()
+	rt := typeMapping[tn]
+	if rt == nil {
+		panic(fmt.Errorf("not found record type for %s", tn))
+	}
 
-func (inst *Header) SetDirty(idx int) {
-	inst.dirty &= 1 << idx
+	cache := ctx.cache(rt)
+	if cache == nil {
+		cache = rt.NewCache()
+		ctx.addCache(cache)
+	}
+
+	inst := cache.Get(keys)
+	if inst != nil {
+		return inst.(*T)
+	}
+
+	data := rt.driver.Get()
+
+	return t
 }

@@ -63,3 +63,11 @@ func TestIterateMethods(t *testing.T) {
 		tv.Method(i).Call([]reflect.Value{reflect.ValueOf(2)})
 	}
 }
+
+func TestGet(t *testing.T) {
+	x := getInst[*testRecord]()
+	t.Log(x.Int32())
+
+	x2 := getInst[testRecord2]()
+	t.Log(x2.Int32())
+}
