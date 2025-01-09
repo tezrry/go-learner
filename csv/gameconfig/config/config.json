@@ -1,0 +1,14 @@
+{
+  "Tables":[{},
+    {"Name": "user","WithIdDesc": true},
+    {"Name": "item", "DefineRowId": true,
+      "MergePrefix":["para1","para2","para3"],
+      "Validator":[{"Name": "Range", "Column": "formula", "Params": [1,5]}]
+    },
+    {"Name": "troop"},
+    {"Name": "troop_class","ExportRowId": true,
+      "Processor": ""
+    },
+    {}],
+  "Renew": false
+}
