@@ -17,7 +17,7 @@ func NewContext(ctx context.Context) *Context {
 
 func (inst *Context) cache(rt *RecordType) cache.IRecordCache {
 	for _, rc := range inst.caches {
-		if rc.TypeId() == rt.Id {
+		if rc.TypeId() == rt.TypeId {
 			return rc
 		}
 	}

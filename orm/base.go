@@ -1,11 +1,9 @@
 package orm
 
 import (
-	"fmt"
 	"reflect"
 
 	"go-learner/orm/cache"
-	"go-learner/orm/driver"
 
 	"github.com/gogo/protobuf/proto"
 )
@@ -14,47 +12,40 @@ type KeyFunc func(...any) string
 
 type CacheFunc func(string, ...any) cache.IRecordCache
 
-type T_DirtyFlag uint64
+type FieldFlag uint64
 
 var typeMapping = make(map[string]*RecordType, 2048)
 
 type RecordType struct {
+	DatabaseId   uint32
+	TableId      uint32
+	TypeName     string
 	Type         reflect.Type
-	Driver       driver.IDriver
-	Id           int32
+	Driver       IDriver
 	NewCacheFunc func() cache.IRecordCache
 	DecodeFunc   func([][]byte, proto.Message) (interface{}, error)
+	KeyNum       uint16
 }
 
 type BaseRecord struct {
-	dirty    T_DirtyFlag
+	dirty    FieldFlag
+	active   FieldFlag
 	raw_data [][]byte
 }
 
-func Get2[T, K any](key K) *T {
-	var t *T
-	tn := reflect.TypeOf(t).Elem().String()
-	typ := typeMapping[tn]
-	if typ == nil {
-		panic(fmt.Errorf("not found record type for %s", tn))
-	}
-
-	return t
-}
-
 func (inst *RecordType) NewCache() cache.IRecordCache {
-
+	return inst.NewCacheFunc()
 }
 
 type Header struct {
-	dirty T_DirtyFlag
+	dirty FieldFlag
 }
 
 func (inst *Header) SetDirty(index int) {
 	inst.dirty = inst.dirty.Set(index)
 }
 
-func (v T_DirtyFlag) Set(index int) T_DirtyFlag {
+func (v FieldFlag) Set(index int) FieldFlag {
 	v &= 1 << index
 	return v
 }

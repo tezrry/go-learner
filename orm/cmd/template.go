@@ -20,7 +20,9 @@ type TestPB struct {
 }
 
 func (inst *TestRecord) LoadByIndex(idx int, v []byte) {
-
+	switch idx {
+	case 0:
+	}
 }
 
 func (inst *TestRecord) Set_i64(v int64) {

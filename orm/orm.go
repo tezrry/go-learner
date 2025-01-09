@@ -24,7 +24,11 @@ func Get[T any](ctx *Context, keys ...any) *T {
 		return inst.(*T)
 	}
 
-	data := rt.driver.Get()
+	data := rt.Driver.Get(rt, keys)
 
 	return t
+}
+
+func GetPartial[T any](ctx *Context, fields FieldFlag, keys ...any) *T {
+
 }
