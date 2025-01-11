@@ -1,11 +1,11 @@
-package user
+package shop
 
-import "go-learner/csv/gameconfig"
+import "go-learner/csv/config"
 
-const TableId gameconfig.ID = 1
+const TableId config.ID = 1
 
 const (
-	RowId_None gameconfig.ID = iota
+	RowId_None config.ID = iota
 	RowId_infantry_health
 	RowId_infantry_attack
 	RowId_infantry_defend
@@ -112,27 +112,35 @@ type Table struct {
 }
 
 type Row struct {
-	gid gameconfig.ID
+	gid config.ID
 }
 
 func init() {
-	generated.Register(TableId, ptr)
+	//generated.Register(TableId, ptr)
 }
 
-func GlobalId(rid gameconfig.ID) gameconfig.ID {
-	return gameconfig.GlobalId(TableId, rid)
+func RowByGlobalId(gid config.ID) *Row {
+	return &ptr.data[gid&config.MaxRowId]
 }
 
-func (inst *Row) GlobalId() gameconfig.ID {
+func RowById(rid config.ID) *Row {
+	return &ptr.data[rid]
+}
+
+func GlobalId(rid config.ID) config.ID {
+	return config.GlobalId(TableId, rid)
+}
+
+func (inst *Row) GlobalId() config.ID {
 	return inst.gid
 }
 
-func (inst *Row) TableId() gameconfig.ID {
+func (inst *Row) TableId() config.ID {
 	return TableId
 }
 
-func (inst *Row) RowId() gameconfig.ID {
-	return inst.gid & gameconfig.MaxRowId
+func (inst *Row) RowId() config.ID {
+	return inst.gid & config.MaxRowId
 }
 
 //func GetTable() *Table {
@@ -145,11 +153,11 @@ func (inst *Row) RowId() gameconfig.ID {
 //	return nil
 //}
 
-func (inst *Table) TableId() gameconfig.ID {
+func (inst *Table) TableId() config.ID {
 	return TableId
 }
 
-func (inst *Table) GetByRowId(rid gameconfig.ID) gameconfig.IRow {
+func (inst *Table) GetByRowId(rid config.ID) config.IRow {
 	return &inst.data[rid]
 }
 
@@ -157,7 +165,7 @@ func (inst *Table) MD5() string {
 	return "12345"
 }
 
-func (inst *Table) Foreach(f func(row gameconfig.IRow)) {
+func (inst *Table) Foreach(f func(row config.IRow)) {
 	for i := range inst.data {
 		f(&inst.data[i])
 	}

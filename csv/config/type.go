@@ -1,4 +1,4 @@
-package gameconfig
+package config
 
 import "unsafe"
 
