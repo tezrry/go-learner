@@ -1,11 +1,11 @@
 package shop
 
-import "go-learner/csv/config"
+import "go-learner/csv/builder"
 
-const TableId config.ID = 1
+const TableId builder.ID = 1
 
 const (
-	RowId_None config.ID = iota
+	RowId_None builder.ID = iota
 	RowId_infantry_health
 	RowId_infantry_attack
 	RowId_infantry_defend
@@ -112,35 +112,35 @@ type Table struct {
 }
 
 type Row struct {
-	gid config.ID
+	gid builder.ID
 }
 
 func init() {
 	//generated.Register(TableId, ptr)
 }
 
-func RowByGlobalId(gid config.ID) *Row {
-	return &ptr.data[gid&config.MaxRowId]
+func RowByGlobalId(gid builder.ID) *Row {
+	return &ptr.data[gid&builder.MaxRowId]
 }
 
-func RowById(rid config.ID) *Row {
+func RowById(rid builder.ID) *Row {
 	return &ptr.data[rid]
 }
 
-func GlobalId(rid config.ID) config.ID {
-	return config.GlobalId(TableId, rid)
+func GlobalId(rid builder.ID) builder.ID {
+	return builder.GlobalId(TableId, rid)
 }
 
-func (inst *Row) GlobalId() config.ID {
+func (inst *Row) GlobalId() builder.ID {
 	return inst.gid
 }
 
-func (inst *Row) TableId() config.ID {
+func (inst *Row) TableId() builder.ID {
 	return TableId
 }
 
-func (inst *Row) RowId() config.ID {
-	return inst.gid & config.MaxRowId
+func (inst *Row) RowId() builder.ID {
+	return inst.gid & builder.MaxRowId
 }
 
 //func GetTable() *Table {
@@ -153,11 +153,11 @@ func (inst *Row) RowId() config.ID {
 //	return nil
 //}
 
-func (inst *Table) TableId() config.ID {
+func (inst *Table) TableId() builder.ID {
 	return TableId
 }
 
-func (inst *Table) GetByRowId(rid config.ID) config.IRow {
+func (inst *Table) GetByRowId(rid builder.ID) builder.IRow {
 	return &inst.data[rid]
 }
 
@@ -165,7 +165,7 @@ func (inst *Table) MD5() string {
 	return "12345"
 }
 
-func (inst *Table) Foreach(f func(row config.IRow)) {
+func (inst *Table) Foreach(f func(row builder.IRow)) {
 	for i := range inst.data {
 		f(&inst.data[i])
 	}
