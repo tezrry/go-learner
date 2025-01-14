@@ -29,7 +29,8 @@ var typeMapping = map[string]string{
 }
 
 const (
-	Type_PK = "pk"
+	SpecialLineStart = "//"
+	EnumPrefix       = "enum"
 )
 
 type Column struct {
