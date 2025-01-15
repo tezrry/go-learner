@@ -1,8 +1,10 @@
-package builder
+package infra
 
 import "unsafe"
 
 type ID uint32
+
+type ENUM int32
 
 type IDInt32Pair struct {
 	Id    ID

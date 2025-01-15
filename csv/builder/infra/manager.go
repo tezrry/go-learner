@@ -1,4 +1,4 @@
-package builder
+package infra
 
 import (
 	"sync/atomic"

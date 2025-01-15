@@ -71,3 +71,29 @@ func TestGet(t *testing.T) {
 	x2 := getInst[testRecord2]()
 	t.Log(x2.Int32())
 }
+
+func TestTypeInfo(t *testing.T) {
+	typ := reflect.TypeOf(uint8(0))
+	t.Log(typ.String())
+	t.Log(typ.Align())
+	t.Log(typ.Size())
+	t.Log(typ.FieldAlign())
+
+	typ2 := reflect.TypeOf(any(nil))
+	t.Log(typ2.String())
+	t.Log(typ2.Align())
+	t.Log(typ2.Size())
+	t.Log(typ2.FieldAlign())
+
+	typ3 := reflect.TypeOf([]int{})
+	t.Log(typ3.String())
+	t.Log(typ3.Align())
+	t.Log(typ3.Size())
+	t.Log(typ3.FieldAlign())
+
+	typ4 := reflect.TypeOf(testRecord{})
+	t.Log(typ4.String())
+	t.Log(typ4.Align())
+	t.Log(typ4.Size())
+	t.Log(typ4.FieldAlign())
+}

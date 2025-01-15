@@ -8,40 +8,77 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
+
+	"builder/infra"
 )
 
 const (
 	RowHeader_Desc = iota
 	RowHeader_Name
 	RowHeader_Type
+	RowHeader_Data
 	RowHeader_End_
 )
 
-var typeMapping = map[string]string{
-	"int":    "int32",
-	"long":   "int64",
-	"float":  "float32",
-	"double": "float64",
-	"string": "string",
-	"bool":   "bool",
-	"any":    "any",
+const (
+	DefType_PK      = "pk"
+	DefType_Int32   = "int"
+	DefType_Int64   = "long"
+	DefType_Float32 = "float"
+	DefType_Float64 = "double"
+	DefType_String  = "string"
+	DefType_Bool    = "bool"
+	DefType_Enum    = "enum"
+	DefType_Any     = "any"
+)
+
+const (
+	Sign_Ref        = '@'
+	Sign_ArrayStart = '['
+	Sign_ArrayEnd   = ']'
+)
+
+var goTypeMapping = map[string]GoType{
+	DefType_PK:      {def: "pk", typ: reflect.TypeOf(infra.ID(0))},
+	DefType_Int32:   {def: "int", typ: reflect.TypeOf(int32(0))},
+	DefType_Int64:   {def: "long", typ: reflect.TypeOf(int64(0))},
+	DefType_Float32: {def: "float", typ: reflect.TypeOf(float32(0))},
+	DefType_Float64: {def: "double", typ: reflect.TypeOf(float64(0))},
+	DefType_String:  {def: "string", typ: reflect.TypeOf("")},
+	DefType_Bool:    {def: "bool", typ: reflect.TypeOf(bool(false))},
+	DefType_Enum:    {def: "enum", typ: reflect.TypeOf(infra.ENUM(0))},
+	DefType_Any:     {def: "any"},
 }
 
 const (
-	SpecialLineStart = "//"
-	EnumPrefix       = "enum"
+	SingleLineStart = "{"
+	SingleLineEnd   = "}"
 )
 
+type GoType struct {
+	def string
+	typ reflect.Type
+	ref string
+}
+
+type SingleLine struct {
+	name  string
+	typ   GoType
+	value []string
+}
+
 type Column struct {
-	Name   string
-	GoType string
+	name string
+	typ  GoType
 }
 
 type Table struct {
-	cs   []Column
-	Data [][]string
-	MD5  string
+	sl   []*SingleLine
+	cs   []*Column
+	data map[string][]string
+	md5  string
 }
 
 type Source struct {
@@ -95,22 +132,128 @@ func main() {
 			panic(err)
 		}
 
-		if len(rows) < RowHeader_End_ {
-			panic(fmt.Errorf("invalid row data"))
-		}
-
-		row := rows[RowHeader_Desc]
-		if len(row) == 0 {
-			panic(fmt.Errorf("invalid row header"))
+		if len(rows) == 0 {
+			panic(fmt.Errorf("empty file %s", fi.Name()))
 		}
 
 		name := strings.TrimSuffix(fi.Name(), filepath.Ext(fi.Name()))
-		src.tbs[name] = &Table{
-			cs: make([]Column, len(rows)),
+		src.tbs[name], err = InitTable(name, rows)
+		if err != nil {
+			panic(err)
 		}
 
-		fmt.Println(rows)
 	}
 
 	_ = f.Close()
+}
+
+func InitTable(name string, rows [][]string) (tb *Table, err error) {
+	var idx int
+	defer func() {
+		tb = nil
+		err = fmt.Errorf("[table %s, row %d] %e", name, idx, recoverError())
+	}()
+
+	nRow := len(rows)
+	if nRow < RowHeader_End_ {
+		return nil, fmt.Errorf("invalid row number %d", nRow)
+	}
+
+	single := make([]*SingleLine, 0, 2)
+	for idx < nRow {
+		row := rows[idx]
+		if row[0] != SingleLineStart {
+			break
+		}
+
+		var sl SingleLine
+		parseSingleLine(row, &sl)
+		single = append(single, &sl)
+		idx++
+	}
+
+	if nRow-idx < RowHeader_End_ {
+		return nil, fmt.Errorf("invalid row number %d", nRow)
+	}
+
+	nameRow := rows[idx+RowHeader_Name]
+	typeRow := rows[idx+RowHeader_Type]
+	nColumn := len(nameRow)
+	tb = &Table{
+		sl: single,
+		cs: make([]*Column, nColumn),
+	}
+
+	for i := 0; i < nColumn; i++ {
+		col := tb.cs[i]
+		col.name = nameRow[i]
+		if col.name == "" {
+			return nil, fmt.Errorf("empty name of column %d", i)
+		}
+
+		col.typ = toGoType(typeRow[i])
+	}
+
+	t := reflect.TypeOf(int32(1))
+
+	return tb, nil
+}
+
+// {,name,enum,chest,equip,hero_chip,}
+// {,period,int,10,}
+func parseSingleLine(row []string, sl *SingleLine) {
+	nL := len(row)
+	if nL < 5 {
+		panic(fmt.Errorf("invalid single line %v", row))
+	}
+
+	sl.name = row[1]
+	sl.typ = toGoType(row[2])
+
+	var e int
+	for i := 4; i < nL; i++ {
+		if row[i] == SingleLineEnd {
+			e = i
+			break
+		}
+	}
+
+	if e == 0 {
+		panic(fmt.Errorf("not found single line end flag"))
+	}
+
+	sl.value = row[3:e]
+}
+
+func toGoType(typ string) GoType {
+	gt, ok := goTypeMapping[typ]
+	if !ok {
+		if len(typ) > 2 && typ[0] == Sign_Ref {
+			return GoType{
+				def: "",
+				typ: reflect.TypeOf(infra.ID(0)),
+				ref: typ[1:],
+			}
+		}
+
+		panic(fmt.Errorf("invalid type %s", typ))
+	}
+
+	return gt
+}
+
+func recoverError() (err error) {
+	if e := recover(); e != nil {
+		err = e.(error)
+		if err == nil {
+			es := e.(string)
+			if es != "" {
+				err = fmt.Errorf("%s", es)
+			} else {
+				err = fmt.Errorf("unknown error found %v", e)
+			}
+		}
+	}
+
+	return
 }

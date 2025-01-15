@@ -1,2 +1,2 @@
-module gameconfig/builder
+module config/builder
 

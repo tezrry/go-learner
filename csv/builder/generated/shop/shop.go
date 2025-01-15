@@ -1,109 +1,33 @@
 package shop
 
-import "go-learner/csv/builder"
+import (
+	"go-learner/csv/builder/infra"
+)
 
-const TableId builder.ID = 1
+const TableId infra.ID = 1
+
+type ItemType infra.ENUM
 
 const (
-	RowId_None builder.ID = iota
+	ItemType_Chest ItemType = iota
+	ItemType_Equip
+	ItemType_End_
+)
+
+var ItemTypeName = [ItemType_End_]string{
+	"chest", "equip",
+}
+
+const (
+	RowId_None infra.ID = iota
 	RowId_infantry_health
-	RowId_infantry_attack
-	RowId_infantry_defend
-	RowId_cavalry_health
-	RowId_cavalry_attack
-	RowId_cavalry_defend
-	RowId_ranged_health
-	RowId_ranged_attack
-	RowId_ranged_defend
-	RowId_siege_health
-	RowId_siege_attack
-	RowId_siege_defend
-	RowId_army_health
-	RowId_army_attack
-	RowId_army_defend
-	RowId_infantry_incr_dmg
-	RowId_cavalry_incr_dmg
-	RowId_ranged_incr_dmg
-	RowId_siege_incr_dmg
-	RowId_army_incr_dmg
-	RowId_infantry_decr_dmg
-	RowId_cavalry_decr_dmg
-	RowId_ranged_decr_dmg
-	RowId_siege_decr_dmg
-	RowId_army_decr_dmg
-	RowId_attacker_incr_dmg
-	RowId_attacker_decr_dmg
-	RowId_defender_incr_dmg
-	RowId_defender_decr_dmg
-	RowId_hero_skill_incr_dmg
-	RowId_hero_skill_decr_dmg
 	RowId_End_
 )
 
 var ptr = &Table{
 	data: []Row{{},
 		// infantry_health:1
-		{gid: 262145},
-		// infantry_attack:2
-		{gid: 262146},
-		// infantry_defend:3
-		{gid: 262147},
-		// cavalry_health:4
-		{gid: 262148},
-		// cavalry_attack:5
-		{gid: 262149},
-		// cavalry_defend:6
-		{gid: 262150},
-		// ranged_health:7
-		{gid: 262151},
-		// ranged_attack:8
-		{gid: 262152},
-		// ranged_defend:9
-		{gid: 262153},
-		// siege_health:10
-		{gid: 262154},
-		// siege_attack:11
-		{gid: 262155},
-		// siege_defend:12
-		{gid: 262156},
-		// army_health:13
-		{gid: 262157},
-		// army_attack:14
-		{gid: 262158},
-		// army_defend:15
-		{gid: 262159},
-		// infantry_incr_dmg:16
-		{gid: 262160},
-		// cavalry_incr_dmg:17
-		{gid: 262161},
-		// ranged_incr_dmg:18
-		{gid: 262162},
-		// siege_incr_dmg:19
-		{gid: 262163},
-		// army_incr_dmg:20
-		{gid: 262164},
-		// infantry_decr_dmg:21
-		{gid: 262165},
-		// cavalry_decr_dmg:22
-		{gid: 262166},
-		// ranged_decr_dmg:23
-		{gid: 262167},
-		// siege_decr_dmg:24
-		{gid: 262168},
-		// army_decr_dmg:25
-		{gid: 262169},
-		// attacker_incr_dmg:26
-		{gid: 262170},
-		// attacker_decr_dmg:27
-		{gid: 262171},
-		// defender_incr_dmg:28
-		{gid: 262172},
-		// defender_decr_dmg:29
-		{gid: 262173},
-		// hero_skill_incr_dmg:30
-		{gid: 262174},
-		// hero_skill_decr_dmg:32
-		{gid: 262175},
+		{_gid: 262145},
 	},
 }
 
@@ -112,35 +36,40 @@ type Table struct {
 }
 
 type Row struct {
-	gid builder.ID
+	_gid  infra.ID
+	_type ItemType
 }
 
 func init() {
 	//generated.Register(TableId, ptr)
 }
 
-func RowByGlobalId(gid builder.ID) *Row {
-	return &ptr.data[gid&builder.MaxRowId]
+func RowByGlobalId(gid infra.ID) *Row {
+	return &ptr.data[gid&infra.MaxRowId]
 }
 
-func RowById(rid builder.ID) *Row {
+func RowById(rid infra.ID) *Row {
 	return &ptr.data[rid]
 }
 
-func GlobalId(rid builder.ID) builder.ID {
-	return builder.GlobalId(TableId, rid)
+func GlobalId(rid infra.ID) infra.ID {
+	return infra.GlobalId(TableId, rid)
 }
 
-func (inst *Row) GlobalId() builder.ID {
-	return inst.gid
+func (inst *Row) GlobalId() infra.ID {
+	return inst._gid
 }
 
-func (inst *Row) TableId() builder.ID {
+func (inst *Row) TableId() infra.ID {
 	return TableId
 }
 
-func (inst *Row) RowId() builder.ID {
-	return inst.gid & builder.MaxRowId
+func (inst *Row) RowId() infra.ID {
+	return inst._gid & infra.MaxRowId
+}
+
+func (inst *Row) Type() ItemType {
+	return inst._type
 }
 
 //func GetTable() *Table {
@@ -153,20 +82,14 @@ func (inst *Row) RowId() builder.ID {
 //	return nil
 //}
 
-func (inst *Table) TableId() builder.ID {
+func (inst *Table) TableId() infra.ID {
 	return TableId
-}
-
-func (inst *Table) GetByRowId(rid builder.ID) builder.IRow {
-	return &inst.data[rid]
 }
 
 func (inst *Table) MD5() string {
 	return "12345"
 }
 
-func (inst *Table) Foreach(f func(row builder.IRow)) {
-	for i := range inst.data {
-		f(&inst.data[i])
-	}
+func (it ItemType) ToString() string {
+	return ItemTypeName[it]
 }
