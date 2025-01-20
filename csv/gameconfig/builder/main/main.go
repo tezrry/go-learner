@@ -16,6 +16,10 @@ type Source struct {
 	tbs map[string]*lexer.Table
 }
 
+type genFileNode struct {
+	info os.FileInfo
+}
+
 func main() {
 	var cfgName string
 	flag.StringVar(&cfgName, "c", "test/config/config.json", "")
@@ -43,6 +47,21 @@ func main() {
 		panic(err)
 	}
 
+	genFiles, err := f.Readdir(-1)
+	if err != nil {
+		panic(err)
+	}
+	_ = f.Close()
+	genMap := make(map[string]os.FileInfo, len(genFiles))
+	for _, fi := range genFiles {
+		if fi.IsDir() {
+			metaName := filepath.Join(outputDir, fi.Name(), "meta.json")
+			f, err = os.OpenFile(metaName, os.O_RDWR|os.O_CREATE, 0666)
+			genMap[fi.Name()] = fi
+		}
+
+	}
+
 	var srcDir string
 	flag.StringVar(&srcDir, "s", "test", "source directory")
 	f, err = os.Open(srcDir)
@@ -59,7 +78,7 @@ func main() {
 	var src Source
 	src.tbs = make(map[string]*lexer.Table, len(srcFiles))
 
-	csv := new(reader.CsvReader)
+	csv := new(reader.CSV)
 	for _, fi := range srcFiles {
 		if fi.IsDir() || filepath.Ext(fi.Name()) != ".csv" {
 			continue

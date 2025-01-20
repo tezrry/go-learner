@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-type CsvReader struct{}
+type CSV struct{}
 
-func (inst *CsvReader) Read(fileName string) ([][]string, error) {
+func (inst *CSV) Read(fileName string) ([][]string, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (inst *CsvReader) Read(fileName string) ([][]string, error) {
 	return rows, nil
 }
 
-func (inst *CsvReader) Version(fileName string) string {
+func (inst *CSV) Version(fileName string) string {
 	//cmd := exec.Command("git", "rev-parse", "HEAD:", fileName)
 	//var out bytes.Buffer
 	//cmd.Stdout = &out

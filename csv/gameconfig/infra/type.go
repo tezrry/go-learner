@@ -4,6 +4,8 @@ import "unsafe"
 
 type ID uint32
 
+const InvalidID = ID(0)
+
 type ENUM int32
 
 type IDInt32Pair struct {
