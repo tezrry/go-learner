@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	config "csv/builder/config"
+	"csv/gameconfig/infra/ctype"
 )
 
 const (
@@ -33,7 +33,7 @@ const (
 )
 
 var simpleTypeMapping = map[string]*GoType{
-	Def_PK:      {def: Def_PK, typ: reflect.TypeOf(config.ID(0))},
+	Def_PK:      {def: Def_PK, typ: reflect.TypeOf(ctype.ID(0))},
 	Def_Int32:   {def: Def_Int32, typ: reflect.TypeOf(int32(0))},
 	Def_Int64:   {def: Def_Int64, typ: reflect.TypeOf(int64(0))},
 	Def_Uint32:  {def: Def_Uint32, typ: reflect.TypeOf(uint32(0))},
@@ -42,7 +42,7 @@ var simpleTypeMapping = map[string]*GoType{
 	Def_Float64: {def: Def_Float64, typ: reflect.TypeOf(float64(0))},
 	Def_String:  {def: Def_String, typ: reflect.TypeOf("")},
 	Def_Bool:    {def: Def_Bool, typ: reflect.TypeOf(false)},
-	Def_Enum:    {def: Def_Enum, typ: reflect.TypeOf(config.ENUM(0))},
+	Def_Enum:    {def: Def_Enum, typ: reflect.TypeOf(ctype.ENUM(0))},
 	Def_Any:     {def: Def_Any},
 }
 
@@ -212,7 +212,7 @@ func toGoType(typ string) *GoType {
 		if len(typ) > 2 && typ[0] == Sign_Ref {
 			return &GoType{
 				def: "",
-				typ: reflect.TypeOf(config.ID(0)),
+				typ: reflect.TypeOf(ctype.ID(0)),
 				ref: typ[1:],
 			}
 		}

@@ -2,21 +2,23 @@ package infra
 
 import (
 	"sync/atomic"
+
+	"csv/gameconfig/infra/ctype"
 )
 
 var currentIdx atomic.Int64
 var versions [2]*Manager
 
 type IRow interface {
-	GlobalId() ID
-	TableId() ID
-	RowId() ID
+	GlobalId() ctype.ID
+	TableId() ctype.ID
+	RowId() ctype.ID
 }
 
 type ITable interface {
-	TableId() ID
+	TableId() ctype.ID
 	MD5() string
-	GetByRowId(rid ID) IRow
+	GetByRowId(rid ctype.ID) IRow
 	Foreach(f func(row IRow))
 }
 
@@ -35,18 +37,6 @@ func Reload(ver int64, tbs []ITable) {
 	currentIdx.Store(nextIdx)
 }
 
-func GlobalId(tableId, rowId ID) ID {
-	return (tableId << rowIdOffset) | rowId
-}
-
-func TableId(gid ID) ID {
-	return (gid & tableMask) >> rowIdOffset
-}
-
-func RowId(gid ID) ID {
-	return gid & MaxRowId
-}
-
 func Current() *Manager {
 	return versions[currentIdx.Load()]
 }
@@ -54,19 +44,19 @@ func Current() *Manager {
 func (inst *Manager) reload(ver int64, tbs []ITable) {
 }
 
-func (inst *Manager) GetByGlobalId(gid ID) IRow {
-	tb := inst.tbs[TableId(gid)]
-	return tb.GetByRowId(RowId(gid))
+func (inst *Manager) GetByGlobalId(gid ctype.ID) IRow {
+	tb := inst.tbs[ctype.TableId(gid)]
+	return tb.GetByRowId(ctype.RowId(gid))
 }
 
-func (inst *Manager) GetRow(tableId ID, rowId ID) IRow {
+func (inst *Manager) GetRow(tableId ctype.ID, rowId ctype.ID) IRow {
 	return inst.GetTable(tableId).GetByRowId(rowId)
 }
 
-func (inst *Manager) GetTable(tableId ID) ITable {
+func (inst *Manager) GetTable(tableId ctype.ID) ITable {
 	return inst.tbs[tableId]
 }
 
-func (inst *Manager) ForeachRow(tableId ID, f func(row IRow)) {
+func (inst *Manager) ForeachRow(tableId ctype.ID, f func(row IRow)) {
 	inst.GetTable(tableId).Foreach(f)
 }

@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"config/builder/lexer"
-	"config/builder/reader"
+	"csv/gameconfig/builder/lexer"
+	"csv/gameconfig/builder/reader"
 )
 
 type Source struct {

@@ -1,4 +1,4 @@
-package infra
+package ctype
 
 import "unsafe"
 
@@ -35,6 +35,18 @@ const (
 	MaxTableId  = (1 << (unsafe.Sizeof(ID(0))*8 - rowIdOffset)) - 1
 	tableMask   = MaxTableId << rowIdOffset
 )
+
+func GlobalId(tableId, rowId ID) ID {
+	return (tableId << rowIdOffset) | rowId
+}
+
+func TableId(gid ID) ID {
+	return (gid & tableMask) >> rowIdOffset
+}
+
+func RowId(gid ID) ID {
+	return gid & MaxRowId
+}
 
 func (inst Params) IterateIDFloatPair(f func(IDFloat32Pair)) {
 	lp := len(inst) >> 1
