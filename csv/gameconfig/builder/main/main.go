@@ -10,14 +10,11 @@ import (
 
 	"csv/gameconfig/builder/lexer"
 	"csv/gameconfig/builder/reader"
+	"csv/gameconfig/infra/metafile"
 )
 
 type Source struct {
 	tbs map[string]*lexer.Table
-}
-
-type genFileNode struct {
-	info os.FileInfo
 }
 
 func main() {
@@ -80,11 +77,18 @@ func main() {
 
 	csv := new(reader.CSV)
 	for _, fi := range srcFiles {
-		if fi.IsDir() || filepath.Ext(fi.Name()) != ".csv" {
+		if fi.IsDir() || filepath.Ext(fi.Name()) != csv.Suffix() {
 			continue
 		}
 
-		name := strings.TrimSuffix(fi.Name(), filepath.Ext(fi.Name()))
+		name := strings.TrimSuffix(fi.Name(), csv.Suffix())
+		meta, err2 := metafile.LoadTable(outputDir, name)
+		if err2 != nil {
+			if err2 == io.EOF {
+				meta, err2 = metafile.CreateFile(outputDir, csv.Version(name), name)
+			}
+		}
+
 		if csv.Version(name) == "" {
 
 		}

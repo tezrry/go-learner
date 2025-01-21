@@ -21,22 +21,22 @@ func TestCreateFile(t *testing.T) {
 	gid1 := ctype.GlobalId(mf.TableId(), 1)
 	err = mf.AddId(id1)
 	require.NoError(t, err)
-	require.Equal(t, gid1, mf.NameToGlobalID(id1))
+	require.Equal(t, gid1, mf.GlobalID(id1))
 	err = mf.AddId(id1)
 	require.NoError(t, err)
-	require.Equal(t, gid1, mf.NameToGlobalID(id1))
+	require.Equal(t, gid1, mf.GlobalID(id1))
 
 	id2 := "def"
 	gid2 := ctype.GlobalId(mf.TableId(), 2)
 	err = mf.AddId(id2)
 	require.NoError(t, err)
-	require.Equal(t, gid2, mf.NameToGlobalID(id2))
+	require.Equal(t, gid2, mf.GlobalID(id2))
 
 	mf.Close()
 }
 
 func TestLoadFile(t *testing.T) {
-	mf, err := LoadFile("test", "shop")
+	mf, err := LoadTable("test", "shop")
 	require.NoError(t, err)
 	require.NotNil(t, mf)
 	t.Log(mf.Version())
@@ -45,11 +45,11 @@ func TestLoadFile(t *testing.T) {
 	err = mf.LoadAll()
 	require.NoError(t, err)
 
-	require.Equal(t, ctype.GlobalId(mf.TableId(), 2), mf.NameToGlobalID("def"))
+	require.Equal(t, ctype.GlobalId(mf.TableId(), 2), mf.GlobalID("def"))
 }
 
 func TestSetVersion(t *testing.T) {
-	mf, err := LoadFile("test", "shop")
+	mf, err := LoadTable("test", "shop")
 	require.NoError(t, err)
 	require.NotNil(t, mf)
 
@@ -61,5 +61,5 @@ func TestSetVersion(t *testing.T) {
 
 	err = mf.AddId("fgh")
 	require.NoError(t, err)
-	require.Equal(t, ctype.GlobalId(mf.TableId(), 3), mf.NameToGlobalID("fgh"))
+	require.Equal(t, ctype.GlobalId(mf.TableId(), 3), mf.GlobalID("fgh"))
 }

@@ -16,16 +16,22 @@ const VersionLen = 20
 const Delim = '\n'
 const FileName = "metadata.txt"
 
-type Data struct {
+type TableData struct {
 	ver   string
 	ids   []string
-	tid   ctype.ID
-	m     map[string]ctype.ID
+	tid   ctype.TID
+	m     map[string]ctype.RID
 	f     *os.File
 	idPos int
 }
 
-func LoadAll(rootDir string) (map[string]*Data, error) {
+type TableGroupData struct {
+	dir   string
+	m     map[string]*TableData
+	maxId ctype.TID
+}
+
+func LoadTableGroup(rootDir string) (*TableGroupData, error) {
 	f, err := os.Open(rootDir)
 	if err != nil {
 		return nil, err
@@ -36,24 +42,29 @@ func LoadAll(rootDir string) (map[string]*Data, error) {
 	}
 	_ = f.Close()
 
-	rtn := make(map[string]*Data, len(fis))
+	m := make(map[string]*TableData, len(fis))
+	var mtd *TableData
+	maxId := ctype.TID(0)
 	for _, fi := range fis {
 		if !fi.IsDir() {
 			continue
 		}
 
-		mf, err := LoadFile(rootDir, fi.Name())
+		mtd, err = LoadTable(rootDir, fi.Name())
 		if err != nil {
 			return nil, err
 		}
 
-		rtn[fi.Name()] = mf
+		m[fi.Name()] = mtd
+		if mtd.TableId() > maxId {
+			maxId = mtd.TableId()
+		}
 	}
 
-	return rtn, nil
+	return &TableGroupData{dir: rootDir, m: m, maxId: maxId}, nil
 }
 
-func CreateFile(rootDir, version, name string, id ctype.ID) (*Data, error) {
+func CreateFile(rootDir, version, name string, id ctype.TID) (*TableData, error) {
 	if len(version) != VersionLen {
 		return nil, fmt.Errorf("invalid version length %d", len(version))
 	}
@@ -81,7 +92,7 @@ func CreateFile(rootDir, version, name string, id ctype.ID) (*Data, error) {
 		return nil, err
 	}
 
-	rtn := &Data{ver: version, tid: id, f: f, idPos: n}
+	rtn := &TableData{ver: version, tid: id, f: f, idPos: n}
 	if err = rtn.LoadAll(); err != nil {
 		return nil, err
 	}
@@ -89,7 +100,7 @@ func CreateFile(rootDir, version, name string, id ctype.ID) (*Data, error) {
 	return rtn, nil
 }
 
-func LoadFile(rootDir, name string) (*Data, error) {
+func LoadTable(rootDir, name string) (*TableData, error) {
 	fn := filepath.Join(rootDir, name, FileName)
 	f, err := os.OpenFile(fn, os.O_RDWR, 0666)
 	if err != nil {
@@ -131,13 +142,13 @@ func LoadFile(rootDir, name string) (*Data, error) {
 	}
 
 	n := VersionLen + 1 + len(bId) + 1
-	return &Data{ver: slice.ByteSlice2String(bVer), tid: ctype.ID(i), f: f, idPos: n}, nil
+	return &TableData{ver: slice.ByteSlice2String(bVer), tid: ctype.TID(i), f: f, idPos: n}, nil
 }
 
-func (inst *Data) LoadAll() error {
+func (inst *TableData) LoadAll() error {
 	initSize := 2048
 	inst.ids = make([]string, 0, initSize)
-	inst.m = make(map[string]ctype.ID, initSize)
+	inst.m = make(map[string]ctype.RID, initSize)
 
 	_, err := inst.f.Seek(int64(inst.idPos), io.SeekStart)
 	if err != nil {
@@ -145,7 +156,7 @@ func (inst *Data) LoadAll() error {
 	}
 
 	reader := bufio.NewReader(inst.f)
-	rid := ctype.ID(0)
+	rid := ctype.RID(0)
 	for {
 		line, err := reader.ReadString(Delim)
 		if err != nil {
@@ -171,7 +182,7 @@ func (inst *Data) LoadAll() error {
 	}
 }
 
-func (inst *Data) Update(version string) error {
+func (inst *TableData) Update(version string) error {
 	_, err := inst.f.Seek(0, io.SeekStart)
 	if err != nil {
 		return err
@@ -191,7 +202,7 @@ func (inst *Data) Update(version string) error {
 	return nil
 }
 
-func (inst *Data) AddId(idName string) error {
+func (inst *TableData) AddId(idName string) error {
 	if inst.m[idName] != ctype.InvalidID {
 		return nil
 	}
@@ -202,11 +213,11 @@ func (inst *Data) AddId(idName string) error {
 	}
 
 	inst.ids = append(inst.ids, idName)
-	inst.m[idName] = ctype.ID(len(inst.ids))
+	inst.m[idName] = ctype.RID(len(inst.ids))
 	return nil
 }
 
-func (inst *Data) NameToGlobalID(idName string) ctype.ID {
+func (inst *TableData) GlobalID(idName string) ctype.GID {
 	rid := inst.m[idName]
 	if rid != ctype.InvalidID {
 		return ctype.GlobalId(inst.tid, rid)
@@ -215,14 +226,35 @@ func (inst *Data) NameToGlobalID(idName string) ctype.ID {
 	return ctype.InvalidID
 }
 
-func (inst *Data) Version() string {
+func (inst *TableData) Version() string {
 	return inst.ver
 }
 
-func (inst *Data) TableId() ctype.ID {
+func (inst *TableData) TableId() ctype.TID {
 	return inst.tid
 }
 
-func (inst *Data) Close() {
+func (inst *TableData) Close() {
 	_ = inst.f.Close()
+}
+
+func (inst *TableGroupData) Table(name string) *TableData {
+	return inst.m[name]
+}
+
+func (inst *TableGroupData) CreateTable(name, version string) (*TableData, error) {
+	td := inst.m[name]
+	if td != nil {
+		return nil, fmt.Errorf("table %s already exists", name)
+	}
+
+	maxId := inst.maxId + 1
+	td, err := CreateFile(inst.dir, version, name, maxId)
+	if err != nil {
+		return nil, err
+	}
+
+	inst.maxId = maxId
+	inst.m[name] = td
+	return td, nil
 }

@@ -44,3 +44,7 @@ func (inst *CSV) Version(fileName string) string {
 	//return status != ""
 	return ""
 }
+
+func (inst *CSV) Suffix() string {
+	return ".csv"
+}
