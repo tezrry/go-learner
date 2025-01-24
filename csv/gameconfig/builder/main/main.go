@@ -19,7 +19,7 @@ type Source struct {
 
 func main() {
 	var cfgName string
-	flag.StringVar(&cfgName, "c", "test/config/config.json", "")
+	flag.StringVar(&cfgName, "c", "builder/test/config/config.json", "")
 	f, err := os.Open(cfgName)
 	if err != nil {
 		panic(err)
@@ -38,29 +38,19 @@ func main() {
 	_ = f.Close()
 
 	var outputDir string
-	flag.StringVar(&outputDir, "o", "generated", "output directory")
+	flag.StringVar(&outputDir, "o", "builder/generated", "output directory")
 	f, err = os.Open(outputDir)
 	if err != nil {
 		panic(err)
 	}
 
-	genFiles, err := f.Readdir(-1)
+	tbg, err := metafile.LoadTableGroup(outputDir)
 	if err != nil {
 		panic(err)
 	}
-	_ = f.Close()
-	genMap := make(map[string]os.FileInfo, len(genFiles))
-	for _, fi := range genFiles {
-		if fi.IsDir() {
-			metaName := filepath.Join(outputDir, fi.Name(), "meta.json")
-			f, err = os.OpenFile(metaName, os.O_RDWR|os.O_CREATE, 0666)
-			genMap[fi.Name()] = fi
-		}
-
-	}
 
 	var srcDir string
-	flag.StringVar(&srcDir, "s", "test", "source directory")
+	flag.StringVar(&srcDir, "s", "builder/test", "source directory")
 	f, err = os.Open(srcDir)
 	if err != nil {
 		panic(err)
@@ -82,18 +72,26 @@ func main() {
 		}
 
 		name := strings.TrimSuffix(fi.Name(), csv.Suffix())
-		meta, err2 := metafile.LoadTable(outputDir, name)
-		if err2 != nil {
-			if err2 == io.EOF {
-				meta, err2 = metafile.CreateFile(outputDir, csv.Version(name), name)
+		ver := csv.Version(name)
+		meta := tbg.Table(name)
+		if meta == nil {
+			meta, err = tbg.CreateTable(name, ver)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			if ver == meta.Version() {
+				meta.Close()
+				continue
+			}
+
+			err = meta.LoadData()
+			if err != nil {
+				panic(err)
 			}
 		}
 
-		if csv.Version(name) == "" {
-
-		}
-
-		rows, err := csv.Read(name)
+		rows, err := csv.Read(filepath.Join(srcDir, fi.Name()))
 		if err != nil {
 			panic(err)
 		}

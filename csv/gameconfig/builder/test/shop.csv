@@ -1,6 +1,6 @@
 {,type,enum,equip,box,},,,,,,,,,,,
 id,名字,类型,物品,数量,参数1组,参数2组,,参数3组,,,,返利,,,,
 id,name,type,item,num,[param1],[param2,param2],[param3,i,f,s],[reward,id,num,id,num]
-pk,string,enum,@item,int,any,int,int,def,int,float,string,,@item,int,@item,int
+pk,string,enum,@item,int,any,int,int,,int,float,string,,@item,int,@item,int
 shop_1,,equip,item_1,1,string:s,2,2,,3,3.0,s3,,item_1,4,item_1,5
 

@@ -64,7 +64,7 @@ func LoadTableGroup(rootDir string) (*TableGroupData, error) {
 	return &TableGroupData{dir: rootDir, m: m, maxId: maxId}, nil
 }
 
-func CreateFile(rootDir, version, name string, id ctype.TID) (*TableData, error) {
+func createFile(rootDir, version, name string, id ctype.TID) (*TableData, error) {
 	if len(version) != VersionLen {
 		return nil, fmt.Errorf("invalid version length %d", len(version))
 	}
@@ -93,7 +93,7 @@ func CreateFile(rootDir, version, name string, id ctype.TID) (*TableData, error)
 	}
 
 	rtn := &TableData{ver: version, tid: id, f: f, idPos: n}
-	if err = rtn.LoadAll(); err != nil {
+	if err = rtn.LoadData(); err != nil {
 		return nil, err
 	}
 
@@ -142,10 +142,13 @@ func LoadTable(rootDir, name string) (*TableData, error) {
 	}
 
 	n := VersionLen + 1 + len(bId) + 1
-	return &TableData{ver: slice.ByteSlice2String(bVer), tid: ctype.TID(i), f: f, idPos: n}, nil
+	return &TableData{
+		ver: slice.ByteSlice2String(bVer[:VersionLen]),
+		tid: ctype.TID(i), f: f, idPos: n,
+	}, nil
 }
 
-func (inst *TableData) LoadAll() error {
+func (inst *TableData) LoadData() error {
 	initSize := 2048
 	inst.ids = make([]string, 0, initSize)
 	inst.m = make(map[string]ctype.RID, initSize)
@@ -182,7 +185,7 @@ func (inst *TableData) LoadAll() error {
 	}
 }
 
-func (inst *TableData) Update(version string) error {
+func (inst *TableData) SaveAndClose(version string) error {
 	_, err := inst.f.Seek(0, io.SeekStart)
 	if err != nil {
 		return err
@@ -193,12 +196,8 @@ func (inst *TableData) Update(version string) error {
 		return err
 	}
 
-	err = inst.LoadAll()
-	if err != nil {
-		return err
-	}
-
 	inst.ver = version
+	inst.Close()
 	return nil
 }
 
@@ -249,7 +248,7 @@ func (inst *TableGroupData) CreateTable(name, version string) (*TableData, error
 	}
 
 	maxId := inst.maxId + 1
-	td, err := CreateFile(inst.dir, version, name, maxId)
+	td, err := createFile(inst.dir, version, name, maxId)
 	if err != nil {
 		return nil, err
 	}

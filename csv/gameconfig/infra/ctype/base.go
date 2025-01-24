@@ -1,6 +1,8 @@
 package ctype
 
-import "unsafe"
+import (
+	"unsafe"
+)
 
 type _ID uint32
 type GID = _ID
@@ -10,21 +12,6 @@ type RID = _ID
 const InvalidID = _ID(0)
 
 type ENUM int32
-
-type IDInt32Pair struct {
-	Id    GID
-	Value int32
-}
-
-type IDUint32Pair struct {
-	Id    GID
-	Value uint32
-}
-
-type IDFloat32Pair struct {
-	Id    GID
-	Value float32
-}
 
 type IDList []GID
 type Params []float64
@@ -49,12 +36,4 @@ func TableId(gid GID) TID {
 
 func RowId(gid GID) RID {
 	return gid & MaxRowId
-}
-
-func (inst Params) IterateIDFloatPair(f func(IDFloat32Pair)) {
-	lp := len(inst) >> 1
-	for i := 0; i < lp; i++ {
-		ii := i << 1
-		f(IDFloat32Pair{GID(inst[ii]), float32(inst[ii+1])})
-	}
 }

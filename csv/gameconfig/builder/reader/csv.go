@@ -1,9 +1,13 @@
 package reader
 
 import (
+	"crypto/rand"
 	"encoding/csv"
 	"fmt"
 	"os"
+
+	"csv/gameconfig/infra/metafile"
+	"go-learner/slice"
 )
 
 type CSV struct{}
@@ -42,7 +46,9 @@ func (inst *CSV) Version(fileName string) string {
 	//// If output is empty, the file is not modified
 	//status := strings.TrimSpace(out.String())
 	//return status != ""
-	return ""
+	b := make([]byte, metafile.VersionLen)
+	_, _ = rand.Read(b)
+	return slice.ByteSlice2String(b)
 }
 
 func (inst *CSV) Suffix() string {

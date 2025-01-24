@@ -13,7 +13,7 @@ func TestCreateFile(t *testing.T) {
 	b := make([]byte, VersionLen)
 	b[0] = 'a'
 	b[VersionLen-1] = 'a'
-	mf, err := CreateFile("test", slice.ByteSlice2String(b), "shop", 111)
+	mf, err := createFile("test", slice.ByteSlice2String(b), "shop", 111)
 	require.NoError(t, err)
 	require.NotNil(t, mf)
 
@@ -42,7 +42,7 @@ func TestLoadFile(t *testing.T) {
 	t.Log(mf.Version())
 	t.Log(mf.TableId())
 
-	err = mf.LoadAll()
+	err = mf.LoadData()
 	require.NoError(t, err)
 
 	require.Equal(t, ctype.GlobalId(mf.TableId(), 2), mf.GlobalID("def"))
@@ -56,10 +56,19 @@ func TestSetVersion(t *testing.T) {
 	b := make([]byte, VersionLen)
 	b[0] = 'b'
 	b[VersionLen-1] = 'b'
-	err = mf.Update(slice.ByteSlice2String(b))
-	require.NoError(t, err)
+	ver := slice.ByteSlice2String(b)
 
+	err = mf.LoadData()
+	require.NoError(t, err)
 	err = mf.AddId("fgh")
 	require.NoError(t, err)
 	require.Equal(t, ctype.GlobalId(mf.TableId(), 3), mf.GlobalID("fgh"))
+
+	err = mf.SaveVersion(ver)
+	require.NoError(t, err)
+
+	mf, err = LoadTable("test", "shop")
+	require.NoError(t, err)
+	require.NotNil(t, mf)
+	require.Equal(t, ver, mf.Version())
 }

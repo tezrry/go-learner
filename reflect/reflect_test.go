@@ -80,10 +80,11 @@ func TestTypeInfo(t *testing.T) {
 	t.Log(typ.FieldAlign())
 
 	typ2 := reflect.TypeOf(any(nil))
-	t.Log(typ2.String())
-	t.Log(typ2.Align())
-	t.Log(typ2.Size())
-	t.Log(typ2.FieldAlign())
+	require.Nil(t, typ2)
+	//t.Log(typ2.String())
+	//t.Log(typ2.Align())
+	//t.Log(typ2.Size())
+	//t.Log(typ2.FieldAlign())
 
 	typ3 := reflect.TypeOf([]int{})
 	t.Log(typ3.String())
