@@ -96,12 +96,13 @@ func main() {
 			panic(err)
 		}
 
-		src.tbs[name], err = lexer.InitTable(name, rows)
+		tb, err := lexer.InitTable(name, rows)
 		if err != nil {
 			panic(err)
 		}
 
+		gen := lexer.NewGenerator(tb)
+		gen.Save()
 	}
 
-	_ = f.Close()
 }

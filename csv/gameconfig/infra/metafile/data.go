@@ -216,7 +216,7 @@ func (inst *TableData) AddId(idName string) error {
 	return nil
 }
 
-func (inst *TableData) GlobalID(idName string) ctype.GID {
+func (inst *TableData) GlobalID(idName string) ctype.ID {
 	rid := inst.m[idName]
 	if rid != ctype.InvalidID {
 		return ctype.GlobalId(inst.tid, rid)

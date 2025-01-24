@@ -4,16 +4,15 @@ import (
 	"unsafe"
 )
 
-type _ID uint32
-type GID = _ID
-type TID = _ID
-type RID = _ID
+type ID uint32
+type TID = ID
+type RID = ID
 
-const InvalidID = _ID(0)
+const InvalidID = ID(0)
 
 type ENUM int32
 
-type IDList []GID
+type IDList []ID
 type Params []float64
 
 type Uint32List []uint32
@@ -26,14 +25,14 @@ const (
 	tableMask   = MaxTableId << rowIdOffset
 )
 
-func GlobalId(tableId TID, rowId RID) GID {
+func GlobalId(tableId TID, rowId RID) ID {
 	return (tableId << rowIdOffset) | rowId
 }
 
-func TableId(gid GID) TID {
+func TableId(gid ID) TID {
 	return (gid & tableMask) >> rowIdOffset
 }
 
-func RowId(gid GID) RID {
+func RowId(gid ID) RID {
 	return gid & MaxRowId
 }

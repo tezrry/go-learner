@@ -61,17 +61,17 @@ func typeName(ts []reflect.Type) string {
 }
 
 type IDInt32 struct {
-	Id    GID
+	Id    ID
 	Value int32
 }
 
 type IDUint32 struct {
-	Id    GID
+	Id    ID
 	Value uint32
 }
 
 type IDFloat32 struct {
-	Id    GID
+	Id    ID
 	Value float32
 }
 

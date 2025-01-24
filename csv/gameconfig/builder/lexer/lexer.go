@@ -26,7 +26,6 @@ const (
 	Sign_Ref        = '@'
 	Sign_ArrayStart = '['
 	Sign_ArrayEnd   = ']'
-	Sign_SubSep     = '|'
 )
 
 const (
@@ -35,7 +34,7 @@ const (
 )
 
 var simpleTypeMapping = map[string]*GoType{
-	Def_PK:      {def: Def_PK, typ: reflect.TypeOf(ctype.GID(0))},
+	Def_PK:      {def: Def_PK, typ: reflect.TypeOf(ctype.ID(0))},
 	Def_Int32:   {def: Def_Int32, typ: reflect.TypeOf(int32(0))},
 	Def_Int64:   {def: Def_Int64, typ: reflect.TypeOf(int64(0))},
 	Def_Uint32:  {def: Def_Uint32, typ: reflect.TypeOf(uint32(0))},
@@ -45,7 +44,7 @@ var simpleTypeMapping = map[string]*GoType{
 	Def_String:  {def: Def_String, typ: reflect.TypeOf("")},
 	Def_Bool:    {def: Def_Bool, typ: reflect.TypeOf(false)},
 	Def_Enum:    {def: Def_Enum, typ: reflect.TypeOf(ctype.ENUM(0))},
-	Def_Any:     {def: Def_Any},
+	Def_Any:     {def: Def_Any, typ: reflect.TypeOf(reflect.Value{})},
 }
 
 const (
@@ -60,12 +59,14 @@ type GoType struct {
 	def string
 	typ reflect.Type
 	ref string
-	sub []*Column
-	an  int
 }
 
-type GoValue struct {
-	typ *GoType
+type Column struct {
+	name string
+	typ  *GoType
+	sub  []*Column
+	an   int
+	ci   int
 }
 
 type SingleLine struct {
@@ -74,24 +75,19 @@ type SingleLine struct {
 	value []string
 }
 
-type Column struct {
-	name string
-	typ  *GoType
-	csi  int
-}
-
 type Table struct {
+	name string
 	sl   []*SingleLine
 	cs   []*Column
-	data map[string][]string
-	md5  string
+	rows [][]string
+	rsi  int
 }
 
 func InitTable(name string, rows [][]string) (tb *Table, err error) {
 	var rowIdx, currRowIdx, columnIdx int
 	defer func() {
-		tb = nil
 		if e := recover(); e != nil {
+			tb = nil
 			err = e.(error)
 			if err == nil {
 				es := e.(string)
@@ -137,8 +133,9 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 	}
 
 	tb = &Table{
-		sl: single,
-		cs: make([]*Column, 0, nColumn),
+		name: name,
+		sl:   single,
+		cs:   make([]*Column, 0, nColumn),
 	}
 
 	typ0 := toGoType(typeRow[0])
@@ -146,6 +143,7 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 		panic(fmt.Errorf("first column MUST be %s", Def_PK))
 	}
 
+	typ0.ref = name
 	tb.cs = append(tb.cs, &Column{
 		name: nameRow[0],
 		typ:  typ0,
@@ -162,7 +160,7 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 			panic(fmt.Errorf("empty column name"))
 		}
 
-		csi := columnIdx
+		col := &Column{typ: typ, ci: columnIdx}
 		if cn[0] == Sign_ArrayStart {
 			if len(cn) < 2 {
 				panic(fmt.Errorf("invalid array name %s", cn))
@@ -170,7 +168,7 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 
 			ce := len(cn) - 1
 			if cn[ce] == Sign_ArrayEnd {
-				typ.an = 1
+				col.an = 1
 				cn = cn[1:ce]
 				if cn == "" {
 					panic(fmt.Errorf("empty array name"))
@@ -184,35 +182,36 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 			} else {
 				cn = cn[1:]
 				if typ.def == Def_Custom {
+					col.sub = make([]*Column, 0, 16)
 					for columnIdx++; columnIdx < nColumn; columnIdx++ {
+						currRowIdx = rowIdx + RowHeader_Name
 						scn := nameRow[columnIdx]
 						ln := len(scn)
 						if ln == 0 {
 							panic(fmt.Errorf("empty field name"))
 						}
 
-						col := &Column{csi: columnIdx}
-						col.typ = toGoType(typeRow[columnIdx])
-						if col.typ.def == Def_Custom {
-							currRowIdx = rowIdx + RowHeader_Type
+						currRowIdx = rowIdx + RowHeader_Type
+						col1 := &Column{typ: toGoType(typeRow[columnIdx]), ci: columnIdx}
+						if col1.typ.def == Def_Custom {
 							panic(fmt.Errorf("field type can not be custom"))
 						}
 
-						typ.sub = append(typ.sub, col)
+						col.sub = append(col.sub, col1)
 						e := ln - 1
 						if scn[e] == Sign_ArrayEnd {
-							col.name = scn[:e]
+							col1.name = scn[:e]
 							break
 						} else {
-							col.name = scn
+							col1.name = scn
 						}
 					}
 
 					var ei int
-					err, ei = typ.InitCustomType()
+					err, ei = col.initCustomType()
 					if err != nil {
 						if ei == 0 {
-							columnIdx = csi
+							columnIdx = col.ci
 						} else {
 							columnIdx = ei
 						}
@@ -220,7 +219,7 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 						panic(err)
 					}
 				} else {
-					typ.an = 1
+					col.an = 1
 					for columnIdx++; columnIdx < nColumn; columnIdx++ {
 						scn := nameRow[columnIdx]
 						ln := len(scn)
@@ -247,7 +246,7 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 							panic(fmt.Errorf("mismatch type, %s != %s", typeRow[columnIdx], tn))
 						}
 
-						typ.an++
+						col.an++
 						if end {
 							break
 						}
@@ -256,10 +255,12 @@ func InitTable(name string, rows [][]string) (tb *Table, err error) {
 			}
 		}
 
-		currRowIdx = rowIdx + RowHeader_Type
-		tb.cs = append(tb.cs, &Column{name: cn, typ: typ, csi: csi})
+		col.name = cn
+		tb.cs = append(tb.cs, col)
 	}
 
+	tb.rsi = rowIdx + RowHeader_Data
+	tb.rows = rows
 	return tb, nil
 }
 
@@ -289,31 +290,31 @@ func parseSingleLine(row []string, sl *SingleLine) {
 	sl.value = row[3:e]
 }
 
-func toGoType(typ string) *GoType {
-	if typ == Def_Custom {
-		return &GoType{def: Def_Custom, sub: make([]*Column, 0, 4)}
+func toGoType(tn string) *GoType {
+	if tn == Def_Custom {
+		return &GoType{def: Def_Custom}
 	}
 
-	gt, ok := simpleTypeMapping[typ]
+	gt, ok := simpleTypeMapping[tn]
 	if !ok {
-		if len(typ) > 2 && typ[0] == Sign_Ref {
+		if len(tn) > 2 && tn[0] == Sign_Ref {
 			gt = toGoType(Def_PK)
-			gt.ref = typ[1:]
+			gt.ref = tn[1:]
 			return gt
 		}
 
-		panic(fmt.Errorf("invalid type %s", typ))
+		panic(fmt.Errorf("invalid type %s", tn))
 	}
 
 	return gt
 }
 
-func (inst *GoType) InitCustomType() (error, int) {
+func (inst *Column) initCustomType() (error, int) {
 	m := make(map[string]int32, 4)
 	ts := make([]reflect.Type, 0, 4)
 	for _, col := range inst.sub {
 		if col.name == "" {
-			return fmt.Errorf("empty field name"), col.csi
+			return fmt.Errorf("empty field name"), col.ci
 		}
 
 		v := m[col.name]
@@ -337,8 +338,8 @@ func (inst *GoType) InitCustomType() (error, int) {
 	}
 
 	inst.an = int(v0)
-	inst.typ = ctype.CustomType(ts)
-	if inst.typ == nil {
+	inst.typ.typ = ctype.CustomType(ts)
+	if inst.typ.typ == nil {
 		return fmt.Errorf("not found custom type"), 0
 	}
 
