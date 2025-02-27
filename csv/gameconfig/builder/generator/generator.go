@@ -1,9 +1,11 @@
-package lexer
+package generator
 
 import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"csv/gameconfig/builder/lexer"
 )
 
 const (
@@ -11,18 +13,18 @@ const (
 )
 
 type Generator struct {
-	tb          *Table
+	tb          *lexer.Table
 	importCache map[string]reflect.Type
 	sb          strings.Builder
 }
 
-func NewGenerator(tb *Table) *Generator {
+func NewGenerator(tb *lexer.Table) *Generator {
 	inst := &Generator{
 		tb:          tb,
 		importCache: make(map[string]reflect.Type, 16),
 	}
 
-	for _, goType := range simpleTypeMapping {
+	for _, goType := range lexer.SimpleTypeMapping {
 		inst.ImportPkg(goType.typ)
 	}
 

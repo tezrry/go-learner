@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"csv/gameconfig/builder/generator"
 	"csv/gameconfig/builder/lexer"
 	"csv/gameconfig/builder/reader"
 	"csv/gameconfig/infra/metafile"
@@ -101,7 +102,7 @@ func main() {
 			panic(err)
 		}
 
-		gen := lexer.NewGenerator(tb)
+		gen := generator.NewGenerator(tb)
 		gen.Save()
 	}
 

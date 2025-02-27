@@ -33,7 +33,7 @@ const (
 	SingleLineEnd   = "}"
 )
 
-var simpleTypeMapping = map[string]*GoType{
+var SimpleTypeMapping = map[string]*GoType{
 	Def_PK:      {def: Def_PK, typ: reflect.TypeOf(ctype.ID(0))},
 	Def_Int32:   {def: Def_Int32, typ: reflect.TypeOf(int32(0))},
 	Def_Int64:   {def: Def_Int64, typ: reflect.TypeOf(int64(0))},
@@ -295,7 +295,7 @@ func toGoType(tn string) *GoType {
 		return &GoType{def: Def_Custom}
 	}
 
-	gt, ok := simpleTypeMapping[tn]
+	gt, ok := SimpleTypeMapping[tn]
 	if !ok {
 		if len(tn) > 2 && tn[0] == Sign_Ref {
 			gt = toGoType(Def_PK)
