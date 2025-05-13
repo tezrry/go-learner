@@ -179,3 +179,21 @@ func Benchmark_iterate_vs_map1(b *testing.B) {
 		}
 	}
 }
+
+func TestSliceDelete(t *testing.T) {
+	b := []int{0}
+	b = append(b[:0], b[1:]...)
+	t.Log(b)
+
+	b = []int{0, 1, 2}
+	b = append(b[:0], b[1:]...)
+	t.Log(b)
+
+	b = []int{0, 1, 2}
+	b = append(b[:1], b[2:]...)
+	t.Log(b)
+
+	b = []int{0, 1, 2}
+	b = append(b[:2], b[3:]...)
+	t.Log(b)
+}
