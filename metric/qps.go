@@ -25,10 +25,9 @@ func (q *QPS) Incr(v int64) {
 
 func (q *QPS) Collect(currTime int64) float64 {
 	if q.startTime == 0 {
-		//q.num[q.idx.Load()].Store(0)
-		v := q.num[q.idx.Load()].Swap(0)
+		q.num[q.idx.Load()].Store(0)
 		q.startTime = currTime
-		return float64(v)
+		return float64(0)
 	}
 
 	span := currTime - q.startTime
